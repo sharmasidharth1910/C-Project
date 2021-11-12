@@ -1,15 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char square[10] = { 'o', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+//1D array representing different blocks of the board
+//Each number corresponds to its position on board
+char square[10] = {'o', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+//choice - Variable holding the entered position
+//Player - Variable representing the current player
 int choice, player;
 
+//Function that will check the board for the winning positions
+//1 - represents that the game is over with a winner
+//0 - represents that the game is over with a draw
+//-1 - represents that the game is still going on
 int checkForWin();
+
+//Function that will draw the board and update it on to the console
 void displayBoard();
+
+//Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
 int main()
 {
+    //Variable receiving the game status
     int gameStatus;
 
     char mark;
@@ -18,26 +32,29 @@ int main()
 
     do
     {
-      displayBoard();
+        displayBoard();
 
-      // change turns
-      player = (player % 2) ? 1 : 2;
+        // change turns
+        player = (player % 2) ? 1 : 2;
 
-      // get input
-      printf("Player %d, enter a number: ", player);
-      scanf("%d", &choice);
+        // get input
+        printf("Player %d, enter a number: ", player);
+        scanf("%d", &choice);
 
-      // set the correct character based on player turn
-      mark = (player == 1) ? 'X' : 'O';
+        // set the correct character based on player turn
+        mark = (player == 1) ? 'X' : 'O';
 
-      // set board based on user choice or invalid choice
-      markBoard(mark);
+        // set board based on user choice or invalid choice
+        markBoard(mark);
 
-      gameStatus = checkForWin();
+        //Check the game status for win, draw or continue
+        gameStatus = checkForWin();
 
-      player++;
+        player++;
 
-    }while (gameStatus == -1);
+    } while (gameStatus == -1);
+
+    displayBoard();
 
     if (gameStatus == 1)
         printf("==>\aPlayer %d win ", --player);
@@ -47,12 +64,6 @@ int main()
     return 0;
 }
 
-/*********************************************
-FUNCTION TO RETURN GAME STATUS
-1 FOR GAME IS OVER WITH RESULT
--1 FOR GAME IS IN PROGRESS
-O GAME IS OVER AND NO RESULT
- **********************************************/
 int checkForWin()
 {
     int returnValue = 0;
@@ -83,8 +94,7 @@ int checkForWin()
         returnValue = 1;
 
     else if (square[1] != '1' && square[2] != '2' && square[3] != '3' &&
-        square[4] != '4' && square[5] != '5' && square[6] != '6' && square[7]
-        != '7' && square[8] != '8' && square[9] != '9')
+             square[4] != '4' && square[5] != '5' && square[6] != '6' && square[7] != '7' && square[8] != '8' && square[9] != '9')
         returnValue = 0;
     else
         returnValue = -1;
@@ -92,9 +102,6 @@ int checkForWin()
     return returnValue;
 }
 
-/*******************************************************************
-FUNCTION TO DRAW BOARD OF TIC TAC TOE WITH PLAYERS MARK
- *******************************************************************/
 void displayBoard()
 {
     system("cls");
@@ -119,10 +126,6 @@ void displayBoard()
     printf("     |     |     \n\n");
 }
 
-/***************************************
-set the board with the correct character,
-x or o in the correct spot in the array
-****************************************/
 void markBoard(char mark)
 {
     if (choice == 1 && square[1] == '1')
