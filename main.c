@@ -14,6 +14,7 @@ int choice, player;
 //0 - represents that the game is over with a draw
 //-1 - represents that the game is still going on
 int checkForWin();
+void abcd();
 
 //Function that will draw the board and update it on to the console
 void displayBoard();
