@@ -25,7 +25,6 @@ void markBoard(char mark);
 //Function to handle the file operations to store, update and retrieve data
 void readPoints(char playerName[]);
 void updatePoints(char playerName[]);
-void printAllPoints();
 
 int main()
 {
@@ -35,9 +34,6 @@ int main()
     char mark;
 
     player = 1;
-
-    updatePoints("jgkjhgkj");
-    printAllPoints();
 
     do
     {
@@ -117,7 +113,7 @@ int checkForWin()
 
 void displayBoard()
 {
-    // system("cls");
+    system("cls");
 
     printf("\n\n\tTic Tac Toe\n\n");
 
@@ -196,29 +192,6 @@ void readPoints(char playerName[])
         {
             printf("%s's score is %d\n", curPlayer, points);
         }
-    }
-
-    fclose(ptr);
-}
-
-// TODO: Remove this function
-void printAllPoints()
-{
-    // My file management code belongs here ...
-    FILE *ptr;
-    ptr = fopen("fileName.txt", "r");
-    char curPlayer[20];
-    int points;
-
-    if (ptr == NULL)
-    {
-        printf("Could Not open file\n");
-        return;
-    }
-
-    while (fscanf(ptr, "%d", &points) == 1)
-    {
-        printf("%d\n", points);
     }
 
     fclose(ptr);
