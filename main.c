@@ -1,19 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
+#include <time.h>
 
 //1D array representing different blocks of the board
 //Each number corresponds to its position on board
-char square[10] = {'o', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+char square[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 //choice - Variable holding the entered position
 //Player - Variable representing the current player
-int choice, player;
+int choice, player, chance = 0;
 
 //Function that will check the board for the winning positions
 //1 - represents that the game is over with a winner
 //0 - represents that the game is over with a draw
 //-1 - represents that the game is still going on
 int checkForWin();
+
+int cpu();
+
+void pl_vs_cpu();
+
+int cond[8][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 5, 9}, {3, 5, 7}, {1, 4, 7}, {2, 5, 8}, {3, 6, 9}};
+
+int priority[9] = {5, 9, 7, 3, 1, 4, 6, 2, 8};
+
+int cpu_chance = 1;
+
+int flagwin = 0;
+
+int choose = 0;
 
 //Function that will draw the board and update it on to the console
 void displayBoard();
@@ -28,38 +44,69 @@ int main()
 
     char mark;
 
-    player = 1;
+    printf("**********OPTIONS**********\n\n");
+    printf("1. Player Vs CPU\n\n");
+    printf("2. Player Vs Player\n\n");
+    printf("3. Exit \n\n");
+    printf("Enter your choice : ");
+    scanf("%d", &choose);
 
-    do
+    if (choose == 1 || choose == 2)
     {
+        printf("\nRedirecting to game window. Please wait........");
+        clock_t startTime = clock();
+        while (clock() < (startTime + 1000 * 2))
+            ;
+        system("cls");
+    }
+
+    if (choose == 1)
+    {
+        pl_vs_cpu();
+    }
+    else if (choose == 2)
+    {
+        player = 1;
+
+        do
+        {
+            displayBoard();
+
+            // change turns
+            player = (player % 2) ? 1 : 2;
+
+            // get input
+            printf("Player %d, choose a block: ", player);
+            scanf("%d", &choice);
+
+            // set the correct character based on player turn
+            mark = (player == 1) ? 'X' : 'O';
+
+            // set board based on user choice or invalid choice
+            markBoard(mark);
+
+            //Check the game status for win, draw or continue
+            gameStatus = checkForWin();
+
+            player++;
+
+        } while (gameStatus == -1);
+
         displayBoard();
 
-        // change turns
-        player = (player % 2) ? 1 : 2;
-
-        // get input
-        printf("Player %d, enter a number: ", player);
-        scanf("%d", &choice);
-
-        // set the correct character based on player turn
-        mark = (player == 1) ? 'X' : 'O';
-
-        // set board based on user choice or invalid choice
-        markBoard(mark);
-
-        //Check the game status for win, draw or continue
-        gameStatus = checkForWin();
-
-        player++;
-
-    } while (gameStatus == -1);
-
-    displayBoard();
-
-    if (gameStatus == 1)
-        printf("==>\aPlayer %d win ", --player);
+        if (gameStatus == 1)
+            printf("==>\aPlayer %d win ", --player);
+        else
+            printf("==>\aGame draw");
+    }
+    else if (choose == 3)
+    {
+        exit(0);
+    }
     else
-        printf("==>\aGame draw");
+    {
+        printf("Invalid Choice !!");
+    }
 
     return 0;
 }
@@ -108,22 +155,22 @@ void displayBoard()
 
     printf("\n\n\tTic Tac Toe\n\n");
 
-    printf("Player 1 (X)  -  Player 2 (O)\n\n\n");
+    choose == 1 ? printf("Player (X)  -  CPU (O)\n\n\n") : printf("Player 1 (X)  -  Player 2 (O)\n\n\n");
 
-    printf("     |     |     \n");
-    printf("  %c  |  %c  |  %c \n", square[1], square[2], square[3]);
+    printf("         |     |     \n");
+    printf("      %c  |  %c  |  %c \n", square[1], square[2], square[3]);
 
-    printf("_____|_____|_____\n");
-    printf("     |     |     \n");
+    printf("    _____|_____|_____\n");
+    printf("         |     |     \n");
 
-    printf("  %c  |  %c  |  %c \n", square[4], square[5], square[6]);
+    printf("      %c  |  %c  |  %c \n", square[4], square[5], square[6]);
 
-    printf("_____|_____|_____\n");
-    printf("     |     |     \n");
+    printf("    _____|_____|_____\n");
+    printf("         |     |     \n");
 
-    printf("  %c  |  %c  |  %c \n", square[7], square[8], square[9]);
+    printf("      %c  |  %c  |  %c \n", square[7], square[8], square[9]);
 
-    printf("     |     |     \n\n");
+    printf("         |     |     \n\n");
 }
 
 void markBoard(char mark)
@@ -159,6 +206,137 @@ void markBoard(char mark)
         printf("Invalid move ");
 
         player--;
-        getch();
+        printf("%c", getch());
+    }
+}
+int cpu()
+{
+    int i, j, k, check, row, flag = 0;
+    if (cpu_chance > 2)
+    {
+        //printf("checking cpu chance to win");
+        for (i = 0; i < 8; i++)
+        {
+            check = 0;
+            for (j = 0; j < 3; j++)
+            {
+                if (square[cond[i][j]] == 'O')
+                {
+                    check++;
+                }
+                else if (square[cond[i][j]] == 'X')
+                {
+                    check--;
+                }
+            }
+            if (check == 2)
+            {
+                row = i;
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 1)
+        {
+            for (k = 0; k < 3; k++)
+            {
+                if (square[cond[row][k]] != 'O' && square[cond[row][k]] != 'X')
+                {
+                    square[cond[row][k]] = 'O';
+                    return 0;
+                }
+            }
+        }
+    }
+    //blocking
+    if (chance)
+    {
+        //printf("checking cpu chance to block");
+        for (i = 0; i < 8; i++)
+        {
+            check = 0;
+            for (j = 0; j < 3; j++)
+            {
+                if (square[cond[i][j]] == 'X')
+                {
+                    check++;
+                }
+                else if (square[cond[i][j]] == 'O')
+                {
+                    check--;
+                }
+            }
+            if (check == 2)
+            {
+                row = i;
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 1)
+        {
+
+            for (k = 0; k < 3; k++)
+            {
+                if (square[cond[row][k]] != 'X' && square[cond[row][k]] != 'O')
+                {
+                    square[cond[row][k]] = 'O';
+                    return 0;
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < 9; i++)
+    {
+        if (square[priority[i]] != 'O' && square[priority[i]] != 'X')
+        {
+            square[priority[i]] = 'O';
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+void pl_vs_cpu()
+{
+    int gameStatus;
+    player = 0;
+
+    do
+    {
+        displayBoard();
+        if (chance % 2 != 0)
+        {
+            int status = cpu();
+            flagwin = 0;
+            gameStatus = checkForWin();
+            cpu_chance++;
+            chance++;
+        }
+        else
+        {
+            printf("Player choose a block : ");
+            scanf("%d", &choice);
+            markBoard('X');
+            flagwin = 1;
+            gameStatus = checkForWin();
+            chance++;
+            player++;
+        }
+    } while (gameStatus != 1 && chance < 9);
+    displayBoard();
+    if (gameStatus == 1 && flagwin == 0)
+    {
+        printf("CPU IS WINNER");
+    }
+    else if (gameStatus == 1 && flagwin == 1)
+    {
+        printf("PLAYER IS WINNER");
+    }
+    else
+    {
+        printf("DRAW");
     }
 }
