@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //1D array representing different blocks of the board
 //Each number corresponds to its position on board
@@ -21,6 +22,11 @@ void displayBoard();
 //Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
+//Function to handle the file operations to store, update and retrieve data
+void readPoints(char playerName[]);
+void updatePoints(char playerName[]);
+void printAllPoints();
+
 int main()
 {
     //Variable receiving the game status
@@ -29,6 +35,9 @@ int main()
     char mark;
 
     player = 1;
+
+    updatePoints("jgkjhgkj");
+    printAllPoints();
 
     do
     {
@@ -57,10 +66,14 @@ int main()
     displayBoard();
 
     if (gameStatus == 1)
+    {
+        char winner[20] = "winner2";
         printf("==>\aPlayer %d win ", --player);
+    }
     else
         printf("==>\aGame draw");
 
+    getch();
     return 0;
 }
 
@@ -104,7 +117,7 @@ int checkForWin()
 
 void displayBoard()
 {
-    system("cls");
+    // system("cls");
 
     printf("\n\n\tTic Tac Toe\n\n");
 
@@ -161,4 +174,104 @@ void markBoard(char mark)
         player--;
         getch();
     }
+}
+
+// To get the points of a perticular player
+void readPoints(char playerName[])
+{
+    FILE *ptr;
+    ptr = fopen("fileName.txt", "r");
+    char curPlayer[20];
+    int points;
+
+    if (ptr == NULL)
+    {
+        printf("Could Not open file\n");
+        return;
+    }
+
+    while (fscanf(ptr, "%s %d", &curPlayer, &points) == 2)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            printf("%s's score is %d\n", curPlayer, points);
+        }
+    }
+
+    fclose(ptr);
+}
+
+// TODO: Remove this function
+void printAllPoints()
+{
+    // My file management code belongs here ...
+    FILE *ptr;
+    ptr = fopen("fileName.txt", "r");
+    char curPlayer[20];
+    int points;
+
+    if (ptr == NULL)
+    {
+        printf("Could Not open file\n");
+        return;
+    }
+
+    while (fscanf(ptr, "%d", &points) == 1)
+    {
+        printf("%d\n", points);
+    }
+
+    fclose(ptr);
+}
+
+// To update the points of a player
+void updatePoints(char playerName[])
+{
+    FILE *ptr, *tempPtr;
+    ptr = fopen("fileName.txt", "r");
+
+    if (ptr == NULL)
+    {
+        ptr = fopen("fileName.txt", "w");
+        fprintf(ptr, "%s %d\n", playerName, 10);
+        fclose(ptr);
+        return;
+    }
+
+    tempPtr = fopen("tempFile.txt", "w");
+    char curPlayer[20];
+    int points;
+    int newPlayer = 1;
+
+    if (tempPtr == NULL)
+    {
+        printf("Could Not open file\n");
+        return;
+    }
+
+    while (fscanf(ptr, "%s %d", &curPlayer, &points) == 2)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            // fscanf(ptr, "%d", &points);
+            fprintf(tempPtr, "%s %d\n", curPlayer, points + 10);
+            newPlayer = 0;
+        }
+        else
+        {
+            fprintf(tempPtr, "%s %d\n", curPlayer, points);
+        }
+    }
+
+    if (newPlayer)
+    {
+        printf("New Player is Created\n");
+        fprintf(tempPtr, "%s %d\n", playerName, 10);
+    }
+
+    fclose(ptr);
+    fclose(tempPtr);
+
+    remove("fileName.txt");
+    rename("tempFile.txt", "fileName.txt");
 }
