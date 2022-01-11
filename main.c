@@ -25,7 +25,7 @@ void markBoard(char mark);
 // Function to handle the file operations to store, update and retrieve data
 void readPoints(char playerName[]);
 void updatePoints(char playerName[]);
-void authenticatePlayer(char playerName[], char password[]);
+int authenticatePlayer(char playerName[], char password[]);
 
 int main()
 {
@@ -245,7 +245,7 @@ void updatePoints(char playerName[])
     rename("tempFile.txt", "fileName.txt");
 }
 
-void authenticatePlayer(char playerName[], char password[])
+int authenticatePlayer(char playerName[], char password[])
 {
     FILE *ptr;
     ptr = fopen("fileName.txt", "r+");
@@ -265,15 +265,13 @@ void authenticatePlayer(char playerName[], char password[])
         {
             if (strcmp(curPassword, password) == 0)
             {
-                printf("User is logged In");
-                return;
+                return 1;
             }
-            printf("Password is incorrect");
-            return;
+            return -1;
         }
     }
 
     fprintf(ptr, "%s %s %d\n", playerName, password, 0);
-
     fclose(ptr);
+    return 0;
 }
