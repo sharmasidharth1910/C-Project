@@ -2,38 +2,43 @@
 #include <stdlib.h>
 #include <string.h>
 
-//1D array representing different blocks of the board
-//Each number corresponds to its position on board
+// 1D array representing different blocks of the board
+// Each number corresponds to its position on board
 char square[10] = {'o', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-//choice - Variable holding the entered position
-//Player - Variable representing the current player
+// choice - Variable holding the entered position
+// Player - Variable representing the current player
 int choice, player;
 
-//Function that will check the board for the winning positions
-//1 - represents that the game is over with a winner
-//0 - represents that the game is over with a draw
+// Function that will check the board for the winning positions
+// 1 - represents that the game is over with a winner
+// 0 - represents that the game is over with a draw
 //-1 - represents that the game is still going on
 int checkForWin();
 
-//Function that will draw the board and update it on to the console
+// Function that will draw the board and update it on to the console
 void displayBoard();
 
-//Function that will make an entry to the board depending on the player (1 or 2)
+// Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
-//Function to handle the file operations to store, update and retrieve data
+// Function to handle the file operations to store, update and retrieve data
 void readPoints(char playerName[]);
 void updatePoints(char playerName[]);
+void authenticatePlayer(char playerName[], char password[]);
 
 int main()
 {
-    //Variable receiving the game status
+    // Variable receiving the game status
     int gameStatus;
 
     char mark;
 
     player = 1;
+
+    authenticatePlayer("Sneha", "123456");
+    updatePoints("Piyush");
+    getch();
 
     do
     {
@@ -52,7 +57,7 @@ int main()
         // set board based on user choice or invalid choice
         markBoard(mark);
 
-        //Check the game status for win, draw or continue
+        // Check the game status for win, draw or continue
         gameStatus = checkForWin();
 
         player++;
@@ -186,7 +191,7 @@ void readPoints(char playerName[])
         return;
     }
 
-    while (fscanf(ptr, "%s %d", &curPlayer, &points) == 2)
+    while (fscanf(ptr, "%s %*s %d", &curPlayer, &points) == 2)
     {
         if (strcmp(curPlayer, playerName) == 0)
         {
@@ -205,16 +210,14 @@ void updatePoints(char playerName[])
 
     if (ptr == NULL)
     {
-        ptr = fopen("fileName.txt", "w");
-        fprintf(ptr, "%s %d\n", playerName, 10);
-        fclose(ptr);
+        printf("Couldn't open the file, please try again later\n");
         return;
     }
 
     tempPtr = fopen("tempFile.txt", "w");
     char curPlayer[20];
+    char curPassword[20];
     int points;
-    int newPlayer = 1;
 
     if (tempPtr == NULL)
     {
@@ -222,24 +225,17 @@ void updatePoints(char playerName[])
         return;
     }
 
-    while (fscanf(ptr, "%s %d", &curPlayer, &points) == 2)
+    while (fscanf(ptr, "%s %s %d", &curPlayer, &curPassword, &points) == 3)
     {
         if (strcmp(curPlayer, playerName) == 0)
         {
             // fscanf(ptr, "%d", &points);
-            fprintf(tempPtr, "%s %d\n", curPlayer, points + 10);
-            newPlayer = 0;
+            fprintf(tempPtr, "%s %s %d\n", curPlayer, curPassword, points + 10);
         }
         else
         {
-            fprintf(tempPtr, "%s %d\n", curPlayer, points);
+            fprintf(tempPtr, "%s %s %d\n", curPlayer, curPassword, points);
         }
-    }
-
-    if (newPlayer)
-    {
-        printf("New Player is Created\n");
-        fprintf(tempPtr, "%s %d\n", playerName, 10);
     }
 
     fclose(ptr);
@@ -247,4 +243,37 @@ void updatePoints(char playerName[])
 
     remove("fileName.txt");
     rename("tempFile.txt", "fileName.txt");
+}
+
+void authenticatePlayer(char playerName[], char password[])
+{
+    FILE *ptr;
+    ptr = fopen("fileName.txt", "r+");
+
+    if (ptr == NULL)
+    {
+        printf("Couldn't open the file, please try again later\n");
+        return;
+    }
+
+    char curPlayer[20];
+    char curPassword[20];
+
+    while (fscanf(ptr, "%s %s %*d", &curPlayer, &curPassword) == 2)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            if (strcmp(curPassword, password) == 0)
+            {
+                printf("User is logged In");
+                return;
+            }
+            printf("Password is incorrect");
+            return;
+        }
+    }
+
+    fprintf(ptr, "%s %s %d\n", playerName, password, 0);
+
+    fclose(ptr);
 }
