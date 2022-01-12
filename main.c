@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 #include <time.h>
 
 //1D array representing different blocks of the board
@@ -19,7 +20,7 @@ int checkForWin();
 
 int cpu();
 
-void pl_vs_cpu();
+void pl_vs_cpu(char name[]);
 
 int cond[8][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 5, 9}, {3, 5, 7}, {1, 4, 7}, {2, 5, 8}, {3, 6, 9}};
 
@@ -37,8 +38,101 @@ void displayBoard();
 //Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
+//Function that will read the playerData file to display the player score 
+void readPoints(char playerName[]);
+
+//Function to update the player data in the playerData file
+void updatePoints(char playerName[], int point);
+
+//Function to check whether the player already exists in the database or not
+int authenticatePlayer(char playerName[], char password[]);
+
+//Function to create a new player
+int createPlayer(char playerName[], char password[]);
+
 int main()
 {
+    int choice = 0;
+    char name[20];
+    char password[20];
+    int result;
+    // system("cls");
+
+    printf("1. Sign Up\n");
+    printf("2. Login\n");
+    printf("3. Exit\n");
+    printf("Please select an option : ");
+
+    scanf("%d", &choice);
+
+    switch (choice)
+    {
+    case 1:
+
+        printf("Enter the username : ");
+        scanf("%s", name);
+        printf("Enter the password : ");
+        scanf("%s", password);
+
+        result = createPlayer(name, password);
+
+        if (result == 1)
+        {
+            printf("\nSuccessfully signed up the user.\n");
+            clock_t startTime = clock();
+            while (clock() < (startTime + 2000))
+                ;
+            system("cls");
+            break;
+        }
+        else
+        {
+            printf("There was some error in signing up the user. Aborting\n");
+            exit(0);
+            break;
+        }
+
+    case 2:
+
+        printf("Enter the username : ");
+        scanf("%s", name);
+        printf("Enter the password : ");
+        scanf("%s", password);
+
+        result = authenticatePlayer(name, password);
+
+        if (result == 1)
+        {
+            printf("\nSuccessfully logged in the user.\n");
+            clock_t startTime = clock();
+            while (clock() < (startTime + 2000))
+                ;
+            system("cls");
+            break;
+        }
+        else if (result == -1)
+        {
+            printf("The credentials of the users didn't match. Please try again.\n");
+            exit(0);
+            break;
+        }
+        else
+        {
+            printf("There was some error in logging in the user. PLease try later.\n");
+            exit(0);
+            break;
+        }
+
+    case 3:
+        exit(0);
+        break;
+
+    default:
+        printf("Invalid Choice !\n");
+        exit(0);
+        break;
+    }
+
     //Variable receiving the game status
     int gameStatus;
 
@@ -47,7 +141,8 @@ int main()
     printf("**********OPTIONS**********\n\n");
     printf("1. Player Vs CPU\n\n");
     printf("2. Player Vs Player\n\n");
-    printf("3. Exit \n\n");
+    printf("3. Scorecard\n\n");
+    printf("4. Exit \n\n");
     printf("Enter your choice : ");
     scanf("%d", &choose);
 
@@ -55,14 +150,14 @@ int main()
     {
         printf("\nRedirecting to game window. Please wait........");
         clock_t startTime = clock();
-        while (clock() < (startTime + 1000 * 2))
+        while (clock() < (startTime + 2000))
             ;
         system("cls");
     }
 
     if (choose == 1)
     {
-        pl_vs_cpu();
+        pl_vs_cpu(name);
     }
     else if (choose == 2)
     {
@@ -100,6 +195,10 @@ int main()
             printf("==>\aGame draw");
     }
     else if (choose == 3)
+    {
+        readPoints(name);
+    }
+    else if (choose == 4)
     {
         exit(0);
     }
@@ -275,7 +374,6 @@ int cpu()
         }
         if (flag == 1)
         {
-
             for (k = 0; k < 3; k++)
             {
                 if (square[cond[row][k]] != 'X' && square[cond[row][k]] != 'O')
@@ -299,7 +397,153 @@ int cpu()
     return 0;
 }
 
-void pl_vs_cpu()
+int createPlayer(char playerName[], char password[])
+{
+    FILE *ptr;
+    ptr = fopen("playerData.txt", "a+");
+
+    if (fprintf(ptr, "%s %s %d %d %d\n", playerName, password, 0, 0, 0))
+    {
+        fclose(ptr);
+        return 1;
+    }
+
+    return 0;
+}
+
+void updatePoints(char playerName[], int point)
+{
+    FILE *ptr, *tempPtr;
+    ptr = fopen("playerData.txt", "r");
+
+    if (ptr == NULL)
+    {
+        printf("Couldn't open the file\n");
+        return;
+    }
+
+    tempPtr = fopen("tempFile.txt", "w");
+    char curPlayer[20];
+    char curPassword[20];
+    int totalGames;
+    int won;
+    int lost;
+
+    if (tempPtr == NULL)
+    {
+        printf("Could Not open file\n");
+        return;
+    }
+
+    while (fscanf(ptr, "%s %s %d %d %d", curPlayer, curPassword, &totalGames, &won, &lost) == 5)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            totalGames += 1;
+            if (point == 1)
+            {
+                won += 1;
+            }
+            else if (point == -1)
+            {
+                lost += 1;
+            }
+            // fscanf(ptr, "%d", &points);
+            fprintf(tempPtr, "%s %s %d %d %d\n", curPlayer, curPassword, totalGames, won, lost);
+        }
+        else
+        {
+            fprintf(tempPtr, "%s %s %d %d %d\n", curPlayer, curPassword, totalGames, won, lost);
+        }
+    }
+
+    if (fclose(ptr) != 0)
+    {
+        printf("There was some error in closing the player file");
+    }
+    if (fclose(tempPtr) != 0)
+    {
+        printf("There was some error in closing the temp file");
+    }
+
+    char playerFile[] = "playerData.txt";
+
+    int res = remove(playerFile);
+
+    if (res == 0)
+    {
+        printf("Successfully removed the file");
+    }
+    else
+    {
+        printf("\n%s\n",res);
+    }
+    if (rename("tempFile.txt", "playerData.txt") == 0)
+    {
+        printf("Successfully renamed the file.");
+    }
+}
+
+int authenticatePlayer(char playerName[], char password[])
+{
+    FILE *ptr;
+
+    ptr = fopen("playerData.txt", "r");
+
+    if (ptr == NULL)
+    {
+        printf("Couldn't open the file, please try again later\n");
+        return 0;
+    }
+
+    char curPlayer[20];
+    char curPassword[20];
+
+    while (fscanf(ptr, "%s %s %*d %*d %*d", &curPlayer, &curPassword) == 2)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            if (strcmp(curPassword, password) == 0)
+            {
+                return 1;
+            }
+            return -1;
+        }
+    }
+
+    return -1;
+}
+
+void readPoints(char playerName[])
+{
+    FILE *ptr;
+    ptr = fopen("playerData.txt", "r");
+    char curPlayer[20];
+    char pass[20];
+    int totalGames;
+    int won;
+    int lost;
+
+    if (ptr == NULL)
+    {
+        printf("Could Not open file\n");
+        return;
+    }
+
+    while (fscanf(ptr, "%s %s %d %d %d", curPlayer, pass, &totalGames, &won, &lost) == 5)
+    {
+        if (strcmp(curPlayer, playerName) == 0)
+        {
+            printf("Total Games Played : %d\n", totalGames);
+            printf("Games Won : %d\n", won);
+            printf("Games Lost : %d\n", lost);
+        }
+    }
+
+    fclose(ptr);
+}
+
+void pl_vs_cpu(char name[])
 {
     int gameStatus;
     player = 0;
@@ -329,14 +573,17 @@ void pl_vs_cpu()
     displayBoard();
     if (gameStatus == 1 && flagwin == 0)
     {
+        updatePoints(name, -1);
         printf("CPU IS WINNER");
     }
     else if (gameStatus == 1 && flagwin == 1)
     {
+        updatePoints(name, 1);
         printf("PLAYER IS WINNER");
     }
     else
     {
+        updatePoints(name, 0);
         printf("DRAW");
     }
 }
