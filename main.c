@@ -10,7 +10,7 @@ char square[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 //choice - Variable holding the entered position
 //Player - Variable representing the current player
-int choice, player, chance = 0;
+int choice = 0, player, chance = 0;
 
 //Function that will check the board for the winning positions
 //1 - represents that the game is over with a winner
@@ -32,13 +32,15 @@ int flagwin = 0;
 
 int choose = 0;
 
+int gameType;
+
 //Function that will draw the board and update it on to the console
 void displayBoard();
 
 //Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
-//Function that will read the playerData file to display the player score 
+//Function that will read the playerData file to display the player score
 void readPoints(char playerName[]);
 
 //Function to update the player data in the playerData file
@@ -52,10 +54,11 @@ int createPlayer(char playerName[], char password[]);
 
 int main()
 {
-    int choice = 0;
     char name[20];
     char password[20];
     int result;
+    int loginType;
+    int playerValue;
     // system("cls");
 
     printf("1. Sign Up\n");
@@ -63,9 +66,9 @@ int main()
     printf("3. Exit\n");
     printf("Please select an option : ");
 
-    scanf("%d", &choice);
+    scanf("%d", &loginType);
 
-    switch (choice)
+    switch (loginType)
     {
     case 1:
 
@@ -190,9 +193,14 @@ int main()
         displayBoard();
 
         if (gameStatus == 1)
-            printf("==>\aPlayer %d win ", --player);
+        {
+            player -= 1;
+            printf("==>\aPlayer %d win ", player);
+        }
         else
+        {
             printf("==>\aGame draw");
+        }
     }
     else if (choose == 3)
     {
@@ -476,7 +484,7 @@ void updatePoints(char playerName[], int point)
     }
     else
     {
-        printf("\n%s\n",res);
+        printf("\n%s\n", res);
     }
     if (rename("tempFile.txt", "playerData.txt") == 0)
     {
