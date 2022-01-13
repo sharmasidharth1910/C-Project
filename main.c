@@ -195,11 +195,21 @@ int main()
         if (gameStatus == 1)
         {
             player -= 1;
-            printf("==>\aPlayer %d win ", player);
+            if (player == 1)
+            {
+                printf("==>\aPlayer %d win ", player);
+                updatePoints(name, 1);
+            }
+            else
+            {
+                printf("==>\aPlayer %d win ", player);
+                updatePoints(name, -1);
+            }
         }
         else
         {
             printf("==>\aGame draw");
+            updatePoints(name, 0);
         }
     }
     else if (choose == 3)
