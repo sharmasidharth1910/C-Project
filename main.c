@@ -4,17 +4,17 @@
 #include <string.h>
 #include <time.h>
 
-//1D array representing different blocks of the board
-//Each number corresponds to its position on board
+// 1D array representing different blocks of the board
+// Each number corresponds to its position on board
 char square[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-//choice - Variable holding the entered position
-//Player - Variable representing the current player
+// choice - Variable holding the entered position
+// Player - Variable representing the current player
 int choice = 0, player, chance = 0;
 
-//Function that will check the board for the winning positions
-//1 - represents that the game is over with a winner
-//0 - represents that the game is over with a draw
+// Function that will check the board for the winning positions
+// 1 - represents that the game is over with a winner
+// 0 - represents that the game is over with a draw
 //-1 - represents that the game is still going on
 int checkForWin();
 
@@ -34,22 +34,22 @@ int choose = 0;
 
 int gameType;
 
-//Function that will draw the board and update it on to the console
+// Function that will draw the board and update it on to the console
 void displayBoard();
 
-//Function that will make an entry to the board depending on the player (1 or 2)
+// Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
-//Function that will read the playerData file to display the player score
+// Function that will read the playerData file to display the player score
 void readPoints(char playerName[]);
 
-//Function to update the player data in the playerData file
+// Function to update the player data in the playerData file
 void updatePoints(char playerName[], int point);
 
-//Function to check whether the player already exists in the database or not
+// Function to check whether the player already exists in the database or not
 int authenticatePlayer(char playerName[], char password[]);
 
-//Function to create a new player
+// Function to create a new player
 int createPlayer(char playerName[], char password[]);
 
 int main()
@@ -136,7 +136,7 @@ int main()
         break;
     }
 
-    //Variable receiving the game status
+    // Variable receiving the game status
     int gameStatus;
 
     char mark;
@@ -183,7 +183,7 @@ int main()
             // set board based on user choice or invalid choice
             markBoard(mark);
 
-            //Check the game status for win, draw or continue
+            // Check the game status for win, draw or continue
             gameStatus = checkForWin();
 
             player++;
@@ -225,6 +225,7 @@ int main()
         printf("Invalid Choice !!");
     }
 
+    getch();
     return 0;
 }
 
@@ -331,7 +332,7 @@ int cpu()
     int i, j, k, check, row, flag = 0;
     if (cpu_chance > 2)
     {
-        //printf("checking cpu chance to win");
+        // printf("checking cpu chance to win");
         for (i = 0; i < 8; i++)
         {
             check = 0;
@@ -365,10 +366,10 @@ int cpu()
             }
         }
     }
-    //blocking
+    // blocking
     if (chance)
     {
-        //printf("checking cpu chance to block");
+        // printf("checking cpu chance to block");
         for (i = 0; i < 8; i++)
         {
             check = 0;
@@ -523,12 +524,15 @@ int authenticatePlayer(char playerName[], char password[])
         {
             if (strcmp(curPassword, password) == 0)
             {
+                fclose(ptr);
                 return 1;
             }
+            fclose(ptr);
             return -1;
         }
     }
 
+    fclose(ptr);
     return -1;
 }
 
