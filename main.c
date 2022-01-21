@@ -4,52 +4,65 @@
 #include <string.h>
 #include <time.h>
 
-// 1D array representing different blocks of the board
-// Each number corresponds to its position on board
+//1D array representing different blocks of the board
+//Each number corresponds to its position on board
 char square[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-// choice - Variable holding the entered position
-// Player - Variable representing the current player
+//choice - Variable holding the entered position
+//Player - Variable representing the current player
 int choice = 0, player, chance = 0;
 
-// Function that will check the board for the winning positions
-// 1 - represents that the game is over with a winner
-// 0 - represents that the game is over with a draw
+//Function that will check the board for the winning positions
+//1 - represents that the game is over with a winner
+//0 - represents that the game is over with a draw
 //-1 - represents that the game is still going on
 int checkForWin();
 
-int cpu();
+//Function to find the optimal position for the cpu to mark the board.
+void cpu();
 
+//Function to simulate the cpu side of the game
 void pl_vs_cpu(char name[]);
 
-int cond[8][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {1, 5, 9}, {3, 5, 7}, {1, 4, 7}, {2, 5, 8}, {3, 6, 9}};
+//Array positions representing the winning conditions.
+int cond[8][3] = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9},
+    {1, 5, 9},
+    {3, 5, 7},
+    {1, 4, 7},
+    {2, 5, 8},
+    {3, 6, 9},
+};
 
+//Priority of each of the position in the game, i.e. how likely to win if that position is chosen.
 int priority[9] = {5, 9, 7, 3, 1, 4, 6, 2, 8};
 
+//Variable to check whether it's cpu turn or not.
 int cpu_chance = 1;
 
+//Variable storing the information whether the cpu won or the player.
 int flagwin = 0;
 
 int choose = 0;
 
-int gameType;
-
-// Function that will draw the board and update it on to the console
+//Function that will draw the board and update it on to the console
 void displayBoard();
 
-// Function that will make an entry to the board depending on the player (1 or 2)
+//Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
-// Function that will read the playerData file to display the player score
+//Function that will read the playerData file to display the player score
 void readPoints(char playerName[]);
 
-// Function to update the player data in the playerData file
+//Function to update the player data in the playerData file
 void updatePoints(char playerName[], int point);
 
-// Function to check whether the player already exists in the database or not
+//Function to check whether the player already exists in the database or not
 int authenticatePlayer(char playerName[], char password[]);
 
-// Function to create a new player
+//Function to create a new player
 int createPlayer(char playerName[], char password[]);
 
 int main()
@@ -57,9 +70,9 @@ int main()
     char name[20];
     char password[20];
     int result;
+    //Variable to check whether the user signed up or logged in
     int loginType;
-    int playerValue;
-    // system("cls");
+    system("cls");
 
     printf("1. Sign Up\n");
     printf("2. Login\n");
@@ -68,6 +81,7 @@ int main()
 
     scanf("%d", &loginType);
 
+    //Checking the logintype of the user - SignUp | Login
     switch (loginType)
     {
     case 1:
@@ -79,6 +93,7 @@ int main()
 
         result = createPlayer(name, password);
 
+        //Check whether the player was created successfully or not.
         if (result == 1)
         {
             printf("\nSuccessfully signed up the user.\n");
@@ -102,6 +117,7 @@ int main()
         printf("Enter the password : ");
         scanf("%s", password);
 
+        //Check whether the player was authenticated or not.
         result = authenticatePlayer(name, password);
 
         if (result == 1)
@@ -136,9 +152,10 @@ int main()
         break;
     }
 
-    // Variable receiving the game status
+    //Variable receiving the game status
     int gameStatus;
 
+    //Variable storing the information regarding the position to be marked on the board.
     char mark;
 
     printf("**********OPTIONS**********\n\n");
@@ -152,6 +169,7 @@ int main()
     if (choose == 1 || choose == 2)
     {
         printf("\nRedirecting to game window. Please wait........");
+        //Add a delay of 2 seconds
         clock_t startTime = clock();
         while (clock() < (startTime + 2000))
             ;
@@ -183,7 +201,7 @@ int main()
             // set board based on user choice or invalid choice
             markBoard(mark);
 
-            // Check the game status for win, draw or continue
+            //Check the game status for win, draw or continue
             gameStatus = checkForWin();
 
             player++;
@@ -225,7 +243,6 @@ int main()
         printf("Invalid Choice !!");
     }
 
-    getch();
     return 0;
 }
 
@@ -238,31 +255,42 @@ int checkForWin()
         returnValue = 1;
     }
     else if (square[4] == square[5] && square[5] == square[6])
+    {
         returnValue = 1;
-
+    }
     else if (square[7] == square[8] && square[8] == square[9])
+    {
         returnValue = 1;
-
+    }
     else if (square[1] == square[4] && square[4] == square[7])
+    {
         returnValue = 1;
-
+    }
     else if (square[2] == square[5] && square[5] == square[8])
+    {
         returnValue = 1;
-
+    }
     else if (square[3] == square[6] && square[6] == square[9])
+    {
         returnValue = 1;
-
+    }
     else if (square[1] == square[5] && square[5] == square[9])
+    {
         returnValue = 1;
-
+    }
     else if (square[3] == square[5] && square[5] == square[7])
+    {
         returnValue = 1;
-
+    }
     else if (square[1] != '1' && square[2] != '2' && square[3] != '3' &&
              square[4] != '4' && square[5] != '5' && square[6] != '6' && square[7] != '7' && square[8] != '8' && square[9] != '9')
+    {
         returnValue = 0;
+    }
     else
+    {
         returnValue = -1;
+    }
 
     return returnValue;
 }
@@ -327,12 +355,12 @@ void markBoard(char mark)
         printf("%c", getch());
     }
 }
-int cpu()
+void cpu()
 {
     int i, j, k, check, row, flag = 0;
     if (cpu_chance > 2)
     {
-        // printf("checking cpu chance to win");
+        //printf("checking cpu chance to win");
         for (i = 0; i < 8; i++)
         {
             check = 0;
@@ -361,15 +389,15 @@ int cpu()
                 if (square[cond[row][k]] != 'O' && square[cond[row][k]] != 'X')
                 {
                     square[cond[row][k]] = 'O';
-                    return 0;
+                    return;
                 }
             }
         }
     }
-    // blocking
+    //blocking
     if (chance)
     {
-        // printf("checking cpu chance to block");
+        //printf("checking cpu chance to block");
         for (i = 0; i < 8; i++)
         {
             check = 0;
@@ -398,7 +426,7 @@ int cpu()
                 if (square[cond[row][k]] != 'X' && square[cond[row][k]] != 'O')
                 {
                     square[cond[row][k]] = 'O';
-                    return 0;
+                    return;
                 }
             }
         }
@@ -409,11 +437,11 @@ int cpu()
         if (square[priority[i]] != 'O' && square[priority[i]] != 'X')
         {
             square[priority[i]] = 'O';
-            return 0;
+            return;
         }
     }
 
-    return 0;
+    return;
 }
 
 int createPlayer(char playerName[], char password[])
@@ -426,6 +454,7 @@ int createPlayer(char playerName[], char password[])
         fclose(ptr);
         return 1;
     }
+    fclose(ptr);
 
     return 0;
 }
@@ -489,17 +518,9 @@ void updatePoints(char playerName[], int point)
 
     int res = remove(playerFile);
 
-    if (res == 0)
+    if (rename("tempFile.txt", "playerData.txt") != 0)
     {
-        printf("Successfully removed the file");
-    }
-    else
-    {
-        printf("\n%s\n", res);
-    }
-    if (rename("tempFile.txt", "playerData.txt") == 0)
-    {
-        printf("Successfully renamed the file.");
+        printf("There was some error while storing the error.\n");
     }
 }
 
@@ -509,6 +530,7 @@ int authenticatePlayer(char playerName[], char password[])
 
     ptr = fopen("playerData.txt", "r");
 
+    //Check whether the file was opened successfully.
     if (ptr == NULL)
     {
         printf("Couldn't open the file, please try again later\n");
@@ -518,6 +540,7 @@ int authenticatePlayer(char playerName[], char password[])
     char curPlayer[20];
     char curPassword[20];
 
+    //Read the whole file till the currplayer matches the stored player.
     while (fscanf(ptr, "%s %s %*d %*d %*d", &curPlayer, &curPassword) == 2)
     {
         if (strcmp(curPlayer, playerName) == 0)
@@ -531,7 +554,6 @@ int authenticatePlayer(char playerName[], char password[])
             return -1;
         }
     }
-
     fclose(ptr);
     return -1;
 }
@@ -556,9 +578,11 @@ void readPoints(char playerName[])
     {
         if (strcmp(curPlayer, playerName) == 0)
         {
-            printf("Total Games Played : %d\n", totalGames);
+            int draw = totalGames - (won + lost);
+            printf("\nTotal Games Played : %d\n", totalGames);
             printf("Games Won : %d\n", won);
             printf("Games Lost : %d\n", lost);
+            printf("Games Draw : %d\n", draw);
         }
     }
 
@@ -575,7 +599,7 @@ void pl_vs_cpu(char name[])
         displayBoard();
         if (chance % 2 != 0)
         {
-            int status = cpu();
+            cpu();
             flagwin = 0;
             gameStatus = checkForWin();
             cpu_chance++;
