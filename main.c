@@ -72,9 +72,9 @@ int main()
     {
     case 1:
 
-        printf("Enter the username : ");
+        printf("Enter the Username : ");
         scanf("%s", name);
-        printf("Enter the password : ");
+        printf("Enter the Password : ");
         scanf("%s", password);
 
         result = createPlayer(name, password);
