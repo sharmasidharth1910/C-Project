@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <string.h>
 #include <time.h>
+#include "file.h"
 
 //1D array representing different blocks of the board
 //Each number corresponds to its position on board
@@ -52,18 +53,6 @@ void displayBoard();
 
 //Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
-
-//Function that will read the playerData file to display the player score
-void readPoints(char playerName[]);
-
-//Function to update the player data in the playerData file
-void updatePoints(char playerName[], int point);
-
-//Function to check whether the player already exists in the database or not
-int authenticatePlayer(char playerName[], char password[]);
-
-//Function to create a new player
-int createPlayer(char playerName[], char password[]);
 
 int main()
 {
@@ -157,7 +146,7 @@ int main()
 
     //Variable storing the information regarding the position to be marked on the board.
     char mark;
-
+start:
     printf("**********OPTIONS**********\n\n");
     printf("1. Player Vs CPU\n\n");
     printf("2. Player Vs Player\n\n");
@@ -233,6 +222,7 @@ int main()
     else if (choose == 3)
     {
         readPoints(name);
+        goto start;
     }
     else if (choose == 4)
     {
@@ -442,151 +432,6 @@ void cpu()
     }
 
     return;
-}
-
-int createPlayer(char playerName[], char password[])
-{
-    FILE *ptr;
-    ptr = fopen("playerData.txt", "a+");
-
-    if (fprintf(ptr, "%s %s %d %d %d\n", playerName, password, 0, 0, 0))
-    {
-        fclose(ptr);
-        return 1;
-    }
-    fclose(ptr);
-
-    return 0;
-}
-
-void updatePoints(char playerName[], int point)
-{
-    FILE *ptr, *tempPtr;
-    ptr = fopen("playerData.txt", "r");
-
-    if (ptr == NULL)
-    {
-        printf("Couldn't open the file\n");
-        return;
-    }
-
-    tempPtr = fopen("tempFile.txt", "w");
-    char curPlayer[20];
-    char curPassword[20];
-    int totalGames;
-    int won;
-    int lost;
-
-    if (tempPtr == NULL)
-    {
-        printf("Could Not open file\n");
-        return;
-    }
-
-    while (fscanf(ptr, "%s %s %d %d %d", curPlayer, curPassword, &totalGames, &won, &lost) == 5)
-    {
-        if (strcmp(curPlayer, playerName) == 0)
-        {
-            totalGames += 1;
-            if (point == 1)
-            {
-                won += 1;
-            }
-            else if (point == -1)
-            {
-                lost += 1;
-            }
-            // fscanf(ptr, "%d", &points);
-            fprintf(tempPtr, "%s %s %d %d %d\n", curPlayer, curPassword, totalGames, won, lost);
-        }
-        else
-        {
-            fprintf(tempPtr, "%s %s %d %d %d\n", curPlayer, curPassword, totalGames, won, lost);
-        }
-    }
-
-    if (fclose(ptr) != 0)
-    {
-        printf("There was some error in closing the player file");
-    }
-    if (fclose(tempPtr) != 0)
-    {
-        printf("There was some error in closing the temp file");
-    }
-
-    char playerFile[] = "playerData.txt";
-
-    int res = remove(playerFile);
-
-    if (rename("tempFile.txt", "playerData.txt") != 0)
-    {
-        printf("There was some error while storing the error.\n");
-    }
-}
-
-int authenticatePlayer(char playerName[], char password[])
-{
-    FILE *ptr;
-
-    ptr = fopen("playerData.txt", "r");
-
-    //Check whether the file was opened successfully.
-    if (ptr == NULL)
-    {
-        printf("Couldn't open the file, please try again later\n");
-        return 0;
-    }
-
-    char curPlayer[20];
-    char curPassword[20];
-
-    //Read the whole file till the currplayer matches the stored player.
-    while (fscanf(ptr, "%s %s %*d %*d %*d", &curPlayer, &curPassword) == 2)
-    {
-        if (strcmp(curPlayer, playerName) == 0)
-        {
-            if (strcmp(curPassword, password) == 0)
-            {
-                fclose(ptr);
-                return 1;
-            }
-            fclose(ptr);
-            return -1;
-        }
-    }
-    fclose(ptr);
-    return -1;
-}
-
-void readPoints(char playerName[])
-{
-    FILE *ptr;
-    ptr = fopen("playerData.txt", "r");
-    char curPlayer[20];
-    char pass[20];
-    int totalGames;
-    int won;
-    int lost;
-
-    if (ptr == NULL)
-    {
-        printf("Could Not open file\n");
-        return;
-    }
-
-    while (fscanf(ptr, "%s %s %d %d %d", curPlayer, pass, &totalGames, &won, &lost) == 5)
-    {
-        if (strcmp(curPlayer, playerName) == 0)
-        {
-            int draw = totalGames - (won + lost);
-            printf("\nTotal Games Played : %d\n", totalGames);
-            printf("Games Won : %d\n", won);
-            printf("Games Lost : %d\n", lost);
-            printf("Games Draw : %d\n", draw);
-        }
-    }
-
-    fclose(ptr);
 }
 
 void pl_vs_cpu(char name[])
