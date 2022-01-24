@@ -1,7 +1,9 @@
-
 #include <stdio.h>
 #include <string.h>
 
+//File containing all the functionality of the file read and write operations.
+
+//Function that will read the playerData file to display the player score
 void readPoints(char playerName[])
 {
     FILE *ptr;
@@ -22,15 +24,17 @@ void readPoints(char playerName[])
     {
         if (strcmp(curPlayer, playerName) == 0)
         {
-            printf("Total Games Played : %d\n", totalGames);
+            printf("\nTotal Games Played : %d\n", totalGames);
             printf("Games Won : %d\n", won);
-            printf("Games Lost : %d\n", lost);
+            printf("Games Lost : %d\n\n", lost);
+            printf("Games Draw : %d\n", totalGames - (won + lost));
         }
     }
 
     fclose(ptr);
 }
 
+//Function to check whether the player already exists in the database or not
 int authenticatePlayer(char playerName[], char password[])
 {
     FILE *ptr;
@@ -64,6 +68,7 @@ int authenticatePlayer(char playerName[], char password[])
     return -1;
 }
 
+//Function to update the player data in the playerData file
 void updatePoints(char playerName[], int point)
 {
     FILE *ptr, *tempPtr;
@@ -137,6 +142,7 @@ void updatePoints(char playerName[], int point)
     }
 }
 
+//Function to create a new player
 int createPlayer(char playerName[], char password[])
 {
     FILE *ptr;
