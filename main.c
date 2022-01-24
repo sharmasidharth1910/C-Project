@@ -59,86 +59,97 @@ int main()
     char name[20];
     char password[20];
     int result;
+    // variable for checking the exit condition for the program
+    int ctrForExit = 0;
     //Variable to check whether the user signed up or logged in
     int loginType;
-    system("cls");
 
-    printf("1. Sign Up\n");
-    printf("2. Login\n");
-    printf("3. Exit\n");
-    printf("Please select an option : ");
-
-    scanf("%d", &loginType);
-
-    //Checking the logintype of the user - SignUp | Login
-    switch (loginType)
+    while (1)
     {
-    case 1:
+        system("cls");
+        printf("1. Sign Up\n");
+        printf("2. Login\n");
+        printf("3. Exit\n");
+        printf("Please select an option : ");
 
-        printf("Enter the username : ");
-        scanf("%s", name);
-        printf("Enter the password : ");
-        scanf("%s", password);
+        scanf("%d", &loginType);
 
-        result = createPlayer(name, password);
-
-        //Check whether the player was created successfully or not.
-        if (result == 1)
+        //Checking the logintype of the user - SignUp | Login
+        switch (loginType)
         {
-            printf("\nSuccessfully signed up the user.\n");
-            clock_t startTime = clock();
-            while (clock() < (startTime + 2000))
-                ;
-            system("cls");
-            break;
-        }
-        else
-        {
-            printf("There was some error in signing up the user. Aborting\n");
+        case 1:
+
+            printf("Enter the username : ");
+            scanf("%s", name);
+            printf("Enter the password : ");
+            scanf("%s", password);
+
+            result = createPlayer(name, password);
+
+            //Check whether the player was created successfully or not.
+            if (result == 1)
+            {
+                printf("\nSuccessfully signed up the user.\n");
+                clock_t startTime = clock();
+                while (clock() < (startTime + 2000))
+                    ;
+                system("cls");
+                ctrForExit = 1;
+                break;
+            }
+            else
+            {
+                printf("There was some error in signing up the user. Aborting\n");
+                break;
+            }
+
+        case 2:
+
+            printf("Enter the username : ");
+            scanf("%s", name);
+            printf("Enter the password : ");
+            scanf("%s", password);
+
+            //Check whether the player was authenticated or not.
+            result = authenticatePlayer(name, password);
+
+            if (result == 1)
+            {
+                printf("\nSuccessfully logged in the user.\n");
+                clock_t startTime = clock();
+                while (clock() < (startTime + 2000))
+                    ;
+                system("cls");
+                ctrForExit = 1;
+                break;
+            }
+            else if (result == -1)
+            {
+                printf("The credentials of the users didn't match. Please try again.\n");
+                break;
+            }
+            else
+            {
+                printf("There was some error in logging in the user. PLease try later.\n");
+                break;
+            }
+
+        case 3:
             exit(0);
             break;
-        }
 
-    case 2:
-
-        printf("Enter the username : ");
-        scanf("%s", name);
-        printf("Enter the password : ");
-        scanf("%s", password);
-
-        //Check whether the player was authenticated or not.
-        result = authenticatePlayer(name, password);
-
-        if (result == 1)
-        {
-            printf("\nSuccessfully logged in the user.\n");
-            clock_t startTime = clock();
-            while (clock() < (startTime + 2000))
-                ;
-            system("cls");
+        default:
+            printf("Invalid Choice !\n");
             break;
         }
-        else if (result == -1)
+        if (ctrForExit == 1)
         {
-            printf("The credentials of the users didn't match. Please try again.\n");
-            exit(0);
             break;
         }
-        else
-        {
-            printf("There was some error in logging in the user. PLease try later.\n");
-            exit(0);
-            break;
-        }
-
-    case 3:
-        exit(0);
-        break;
-
-    default:
-        printf("Invalid Choice !\n");
-        exit(0);
-        break;
+        clock_t startTime = clock();
+        while (clock() < (startTime + 2000))
+            ;
+        system("cls");
     }
 
     //Variable receiving the game status
@@ -147,7 +158,7 @@ int main()
     //Variable storing the information regarding the position to be marked on the board.
     char mark;
 start:
-    printf("**********OPTIONS**********\n\n");
+    printf("\n\n**********OPTIONS**********\n\n");
     printf("1. Player Vs CPU\n\n");
     printf("2. Player Vs Player\n\n");
     printf("3. Scorecard\n\n");
@@ -231,6 +242,7 @@ start:
     else
     {
         printf("Invalid Choice !!");
+        goto start;
     }
 
     return 0;
