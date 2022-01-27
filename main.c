@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <string.h>
 #include <time.h>
+#include <windows.h>
 #include "file.h"
 
 //1D array representing different blocks of the board
@@ -54,8 +55,17 @@ void displayBoard();
 //Function that will make an entry to the board depending on the player (1 or 2)
 void markBoard(char mark);
 
+void movePrint();
+
 int main()
 {
+    // COORD c;
+    // c.X = 400;
+    // c.Y = 160;
+
+    // SetConsoleCursorPosition(
+    //     GetStdHandle(STD_OUTPUT_HANDLE), c);
+
     char name[20];
     char password[20];
     int result;
@@ -248,6 +258,16 @@ start:
     return 0;
 }
 
+void movePrint()
+{
+    COORD c;
+    c.X = 10;
+    c.Y = 2;
+
+    SetConsoleCursorPosition(
+        GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
+
 int checkForWin()
 {
     int returnValue = 0;
@@ -360,6 +380,7 @@ void markBoard(char mark)
 void cpu()
 {
     int i, j, k, check, row, flag = 0;
+    //Check whether the cpu can win
     if (cpu_chance > 2)
     {
         //printf("checking cpu chance to win");
