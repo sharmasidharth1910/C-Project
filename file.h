@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-
 //File containing all the functionality of the file read and write operations.
 
 //Function that will read the playerData file to display the player score
@@ -16,7 +15,9 @@ void readPoints(char playerName[])
 
     if (ptr == NULL)
     {
+        printf("\033[0;31m");
         printf("Could Not open file\n");
+        printf("\033[0m");
         return;
     }
 
@@ -24,10 +25,12 @@ void readPoints(char playerName[])
     {
         if (strcmp(curPlayer, playerName) == 0)
         {
+            printf("\033[0;32m");
             printf("\nTotal Games Played : %d\n", totalGames);
             printf("Games Won : %d\n", won);
-            printf("Games Lost : %d\n\n", lost);
-            printf("Games Draw : %d\n", totalGames - (won + lost));
+            printf("Games Lost : %d\n", lost);
+            printf("Games Draw : %d\n\n", totalGames - (won + lost));
+            printf("\033[0m");
         }
     }
 
@@ -43,7 +46,9 @@ int authenticatePlayer(char playerName[], char password[])
 
     if (ptr == NULL)
     {
-        printf("Couldn't open the file, please try again later\n");
+        printf("\033[0;31m");
+        printf("Could Not open file\n");
+        printf("\033[0m");
         return 0;
     }
 
@@ -76,7 +81,9 @@ void updatePoints(char playerName[], int point)
 
     if (ptr == NULL)
     {
-        printf("Couldn't open the file\n");
+        printf("\033[0;31m");
+        printf("Could Not open file\n");
+        printf("\033[0m");
         return;
     }
 
@@ -130,15 +137,15 @@ void updatePoints(char playerName[], int point)
 
     if (res == 0)
     {
-        printf("Successfully removed the file");
+        // printf("Successfully removed the file");
     }
     else
     {
-        printf("\n%s\n", res);
+        // printf("\n%s\n", res);
     }
     if (rename("tempFile.txt", "playerData.txt") == 0)
     {
-        printf("Successfully renamed the file.");
+        // printf("Successfully renamed the file.");
     }
 }
 
@@ -147,6 +154,14 @@ int createPlayer(char playerName[], char password[])
 {
     FILE *ptr;
     ptr = fopen("playerData.txt", "a+");
+
+    if (ptr == NULL)
+    {
+        printf("\033[0;31m");
+        printf("Could Not open file\n");
+        printf("\033[0m");
+        return 0;
+    }
 
     if (fprintf(ptr, "%s %s %d %d %d\n", playerName, password, 0, 0, 0))
     {
