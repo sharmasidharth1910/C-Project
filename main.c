@@ -59,16 +59,10 @@ void movePrint();
 
 int main()
 {
-    // COORD c;
-    // c.X = 400;
-    // c.Y = 160;
-
-    // SetConsoleCursorPosition(
-    //     GetStdHandle(STD_OUTPUT_HANDLE), c);
-
     char name[20];
     char password[20];
     int result;
+    char et;
     // variable for checking the exit condition for the program
     int ctrForExit = 0;
     //Variable to check whether the user signed up or logged in
@@ -77,6 +71,7 @@ int main()
     while (1)
     {
         system("cls");
+        printf("\033[0;33m");
         printf("1. Sign Up\n");
         printf("2. Login\n");
         printf("3. Exit\n");
@@ -135,21 +130,32 @@ int main()
             }
             else if (result == -1)
             {
+                printf("\033[0;31m");
                 printf("The credentials of the users didn't match. Please try again.\n");
+                printf("\033[0m");
                 break;
             }
             else
             {
+                printf("\033[0;31m");
                 printf("There was some error in logging in the user. PLease try later.\n");
+                printf("\033[0m");
                 break;
             }
 
         case 3:
-            exit(0);
+            printf("Do you want to exit (y/n)");
+            scanf(" %c", et);
+            if (et == 'y' || et == 'Y')
+            {
+                exit(0);
+            }
             break;
 
         default:
+            printf("\033[0;31m");
             printf("Invalid Choice !\n");
+            printf("\033[0m");
             break;
         }
         if (ctrForExit == 1)
@@ -168,6 +174,7 @@ int main()
     //Variable storing the information regarding the position to be marked on the board.
     char mark;
 start:
+    printf("\033[0;33m");
     printf("\n\n**********OPTIONS**********\n\n");
     printf("1. Player Vs CPU\n\n");
     printf("2. Player Vs Player\n\n");
@@ -225,18 +232,24 @@ start:
             player -= 1;
             if (player == 1)
             {
+                printf("\033[0;32m");
                 printf("==>\aPlayer %d win ", player);
+                printf("\033[0m");
                 updatePoints(name, 1);
             }
             else
             {
+                printf("\033[0;32m");
                 printf("==>\aPlayer %d win ", player);
+                printf("\033[0m");
                 updatePoints(name, -1);
             }
         }
         else
         {
+            printf("\033[0;32m");
             printf("==>\aGame draw");
+            printf("\033[0m");
             updatePoints(name, 0);
         }
     }
@@ -251,7 +264,9 @@ start:
     }
     else
     {
-        printf("Invalid Choice !!");
+        printf("\033[0;31m");
+        printf("Invalid Choice !\n");
+        printf("\033[0m");
         goto start;
     }
 
@@ -320,7 +335,7 @@ int checkForWin()
 void displayBoard()
 {
     system("cls");
-
+    printf("\033[0;33m");
     printf("\n\n\tTic Tac Toe\n\n");
 
     choose == 1 ? printf("Player (X)  -  CPU (O)\n\n\n") : printf("Player 1 (X)  -  Player 2 (O)\n\n\n");
@@ -371,7 +386,9 @@ void markBoard(char mark)
         square[9] = mark;
     else
     {
-        printf("Invalid move ");
+        printf("\033[0;31m");
+        printf("Invalid Move !\n");
+        printf("\033[0m");
 
         player--;
         printf("%c", getch());
@@ -498,16 +515,23 @@ void pl_vs_cpu(char name[])
     if (gameStatus == 1 && flagwin == 0)
     {
         updatePoints(name, -1);
+        printf("\033[0;32m");
         printf("CPU IS WINNER");
+        printf("\033[0m");
     }
     else if (gameStatus == 1 && flagwin == 1)
     {
         updatePoints(name, 1);
+
+        printf("\033[0;32m");
         printf("PLAYER IS WINNER");
+        printf("\033[0m");
     }
     else
     {
         updatePoints(name, 0);
+        printf("\033[0;32m");
         printf("DRAW");
+        printf("\033[0m");
     }
 }
